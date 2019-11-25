@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="refresh" content="500">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <script src="https://yacdn.org/serve/https://raw.githubusercontent.com/lalyos/w3.js/master/w3.js"></script>
+  <script src="https://raw.githubusercontent.com/lalyos/w3.js/master/w3.js"></script>
+</head>
+<body class="w3-light-grey" >
+  <div class="w3-container w3-teal">
+    <h1>Docker events</h1>
+  </div>
+  <div class="w3-container">
+    <p>
+      <input oninput="w3.filterHTML('#table1', '.item', this.value)" placeholder="Filter by..">
+    </p>
+    <table class="w3-table-all" id="table1" >
+      <tr><th>Image</th><th>Name</th><th>Command</th></tr>
+      <tr w3-repeat="Event in events" class="item">
+        <td>{{Event.Config.Image}}</td>
+        <td>{{Event.Name}}</td>
+        <td>{{Event.Path}} {{Event.Args || ""}}</td>
+      </tr>
+    </table>
+  </div>
+  <script>    
+    //w3.getHttpObject("cgi-bin/events", myFunction);
+    w3.getHttpObject("events/started.json", myFunction);
+    function myFunction(myObject) {
+      w3.displayObject("table1", {"events": myObject.events.reverse()});
+      console.log(myObject)
+    }
+  </script>
+</body>
+</html>

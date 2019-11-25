@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+  plugins:
+    container_name: plugins
+    image: lalyos/plugins
+    environment: 
+    - ENABLE=envhooks
+    - "ENVHOOKS_START=(cat; echo)|tee -a /events/stream.json; jq -c -s '{events: .}' /events/stream.json > /events/started.json"
+    volumes: 
+    - /var/run/docker.sock:/var/run/docker.sock
+    - docker-event:/events
+  
+  eventviewer:
+    container_name: eventviewer
+    image: httpd
+    command: 
+    - -vv 
+    - -f
+    - -h 
+    - /www
+    ports: 
+    - 9999:80
+    networks: 
+    - traefik
+    volumes: 
+    - .:/www
+    - docker-event:/www/events:ro
+
+volumes: 
+  docker-event:
+    external: true
+
+networks: 
+  traefik:
+    external: true

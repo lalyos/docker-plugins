@@ -29,6 +29,30 @@ Most plugins are configured via environment variables. For example, here we run 
 		-e "WEBHOOKS_URL=http://requestb.in/ysr016ys" \
 		progrium/plugins
 
+## Envhook
+
+Store all start events in a volume:
+
+```
+  docker run -d \
+    --name=plugins \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	-v docker-event:/events \
+	-e "ENABLE=envhooks autoremove" \
+	-e "ENVHOOKS_START=(cat; echo)|tee -a /events/stream.json; jq -c -s '{events: .}' /events/stream.json > /events/started.json"  \
+	lalyos/plugins
+```
+
+## Envhook - with viewer
+
+combining the above ENVHOOKS_START with a sidcar container, listing started containers
+in a html table:
+```
+docker-compose up -d
+```
+open http://localhost:9999/
+
+
 ## Installing plugins
 
 Plugins can be installed from any Git repository. The `plugn install` command is invoked automatically at boot when setting the `INSTALL` environment variable with a space delimited list of Git repository URLs. These plugins must also be enabled to activate them.
